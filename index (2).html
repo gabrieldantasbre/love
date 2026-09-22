@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para minha flor- 🌼</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌼</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CONFIGURAÇÃO RÁPIDA — não precisa mexer aqui, veja o JS abaixo
+   (procure por "CONFIG" no <script> lá embaixo para editar a
+   palavra, o texto da carta e a foto)
+   ============================================================ */
+
+:root{
+  --white:#ffffff;
+  --cream:#fffdf6;
+  --yellow-50:#fff8e1;
+  --yellow-100:#ffefb8;
+  --yellow-300:#ffd85e;
+  --yellow-500:#f7b733;
+  --yellow-600:#e2a020;
+  --yellow-deep:#c8860a;
+  --ink:#3a2f1c;
+  --ink-soft:#7a6f56;
+  --line:#eee3c2;
+  --absent:#d8d2c2;
+  --absent-ink:#8b8370;
+  --present:#ffe28a;
+  --correct-a:#ffd23f;
+  --correct-b:#f6a821;
+  --shadow-yellow: 0 10px 30px -8px rgba(226,160,32,.45);
+  --radius: 16px;
+
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --white:#22190a;
+    --cream:#241c0d;
+    --ink:#fff3d6;
+    --ink-soft:#d8c691;
+    --line:#4a3c1c;
+  }
+}
+:root[data-theme="dark"]{
+  --white:#22190a;
+  --cream:#241c0d;
+  --ink:#fff3d6;
+  --ink-soft:#d8c691;
+  --line:#4a3c1c;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-padding-top: env(safe-area-inset-top, 0px); }
+html,body{
+  height:100%;
+  margin:0;
+  background:
+    radial-gradient(ellipse at 10% -10%, var(--yellow-50) 0%, transparent 55%),
+    radial-gradient(ellipse at 110% 10%, var(--yellow-100) 0%, transparent 45%),
+    var(--cream);
+  color:var(--ink);
+  font-family:'Nunito', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding: calc(env(safe-area-inset-top,0px) + 18px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);
+}
+
+/* decorative corner petals */
+.bg-petal{
+  position:fixed;
+  pointer-events:none;
+  opacity:.35;
+  z-index:0;
+  filter: blur(.3px);
+}
+.bg-petal.p1{ top:-40px; left:-40px; width:160px; }
+.bg-petal.p2{ bottom:-50px; right:-50px; width:200px; transform:rotate(35deg); }
+
+.wrap{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:460px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* ---------- Header ---------- */
+header{
+  text-align:center;
+  margin-bottom: 18px;
+}
+.eyebrow-flower{
+  width:46px; height:46px;
+  margin:0 auto 6px;
+  display:block;
+}
+h1{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-style:italic;
+  font-size: clamp(1.5rem, 6vw, 2.05rem);
+  line-height:1.15;
+  margin: 0 0 8px;
+  color:var(--ink);
+}
+h1 em{
+  font-style:normal;
+  font-weight:700;
+  background: linear-gradient(180deg, var(--yellow-500), var(--yellow-deep));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.subtitle{
+  font-size:.95rem;
+  color:var(--ink-soft);
+  max-width:340px;
+  margin:0 auto;
+  line-height:1.5;
+}
+.subtitle strong{ color:var(--ink); }
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;
+  top: calc(env(safe-area-inset-top,0px) + 14px);
+  left:50%;
+  transform: translateX(-50%) translateY(-140%);
+  background: var(--ink);
+  color: var(--yellow-100);
+  padding:10px 18px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.85rem;
+  letter-spacing:.2px;
+  z-index:50;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+}
+.toast.show{ transform: translateX(-50%) translateY(0); }
+
+/* ---------- Board ---------- */
+.board{
+  display:grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 7px;
+  margin: 6px 0 20px;
+  width:100%;
+}
+.row{
+  display:grid;
+  gap:7px;
+  grid-template-columns: repeat(var(--word-len), 1fr);
+}
+.row.shake{ animation: shake .45s; }
+@keyframes shake{
+  10%,90%{ transform: translateX(-2px); }
+  20%,80%{ transform: translateX(4px); }
+  30%,50%,70%{ transform: translateX(-7px); }
+  40%,60%{ transform: translateX(7px); }
+}
+
+.tile{
+  aspect-ratio: 1/1;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Fraunces', serif;
+  font-weight:700;
+  font-size: clamp(0.85rem, 4.6vw, 1.4rem);
+  background: var(--white);
+  color: var(--ink);
+  text-transform:uppercase;
+  transition: transform .12s ease, border-color .15s ease;
+  transform-style: preserve-3d;
+}
+.tile.filled{
+  border-color: var(--yellow-500);
+  transform: scale(1.03);
+}
+.tile.pop{ animation: pop .12s ease; }
+@keyframes pop{ 0%{transform:scale(1)} 40%{transform:scale(1.12)} 100%{transform:scale(1.03)} }
+
+.tile.flip{
+  animation: flip .55s ease forwards;
+}
+@keyframes flip{
+  0%{ transform: rotateX(0deg); }
+  50%{ transform: rotateX(-90deg); }
+  51%{ border-color: transparent; }
+  100%{ transform: rotateX(0deg); }
+}
+.tile.correct{
+  background: linear-gradient(155deg, var(--correct-a), var(--correct-b));
+  color:#4a2e00;
+  border-color: transparent;
+  box-shadow: var(--shadow-yellow);
+}
+.tile.present{
+  background: var(--present);
+  color:#5c4200;
+  border-color: transparent;
+}
+.tile.absent{
+  background: var(--absent);
+  color: var(--absent-ink);
+  border-color: transparent;
+}
+
+/* ---------- Keyboard ---------- */
+.keyboard{
+  width:100%;
+  max-width:460px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  user-select:none;
+}
+.krow{
+  display:flex;
+  gap:5px;
+  justify-content:center;
+}
+.key{
+  flex:1;
+  min-width:0;
+  max-width:40px;
+  height:46px;
+  border-radius:8px;
+  border:none;
+  background: var(--white);
+  border:1.5px solid var(--line);
+  color:var(--ink);
+  font-family:'Nunito',sans-serif;
+  font-weight:800;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition: background .15s, transform .08s, border-color .15s;
+  text-transform:uppercase;
+}
+.key:active{ transform: scale(.92); }
+.key.wide{ max-width:64px; font-size:.65rem; letter-spacing:.3px; }
+.key.correct{ background: linear-gradient(155deg, var(--correct-a), var(--correct-b)); color:#4a2e00; border-color:transparent; }
+.key.present{ background: var(--present); color:#5c4200; border-color:transparent; }
+.key.absent{ background: var(--absent); color:var(--absent-ink); border-color:transparent; }
+
+/* ---------- Footer note ---------- */
+.footnote{
+  margin-top:22px;
+  font-size:.75rem;
+  color: var(--ink-soft);
+  text-align:center;
+  max-width:320px;
+  line-height:1.5;
+}
+
+/* ============================================================
+   TELA DE VITÓRIA
+   ============================================================ */
+.win-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);
+  background: radial-gradient(circle at 50% 20%, var(--yellow-100), var(--cream) 70%);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .5s ease;
+  overflow:hidden;
+}
+.win-overlay.show{ opacity:1; pointer-events:auto; }
+
+.petals-field{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.falling-petal{
+  position:absolute;
+  top:-40px;
+  width:16px; height:16px;
+  background: radial-gradient(circle at 35% 30%, var(--correct-a), var(--correct-b) 75%);
+  border-radius: 60% 10% 60% 10%;
+  opacity:.9;
+  animation: fall linear forwards;
+}
+@keyframes fall{
+  to{ transform: translateY(115vh) rotate(340deg); opacity:.2; }
+}
+
+.win-card{
+  position:relative;
+  width:100%;
+  max-width: 400px;
+  max-height: 92vh;
+  overflow-y:auto;
+  background: var(--white);
+  border-radius: 22px;
+  padding: 26px 22px 26px;
+  box-shadow: 0 30px 60px -20px rgba(120,80,0,.35);
+  text-align:center;
+  animation: cardIn .6s cubic-bezier(.2,.9,.25,1) both;
+  border: 1px solid var(--line);
+}
+@keyframes cardIn{
+  from{ opacity:0; transform: translateY(26px) scale(.96); }
+  to{ opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* 3D flower */
+.flower3d-stage{
+  width:120px; height:120px;
+  margin: -58px auto 6px;
+  perspective: 500px;
+}
+.flower3d{
+  position:relative;
+  width:100%; height:100%;
+  transform-style:preserve-3d;
+  animation: spin3d 7s linear infinite;
+}
+@keyframes spin3d{
+  from{ transform: rotateY(0deg) rotateX(8deg); }
+  to{ transform: rotateY(360deg) rotateX(8deg); }
+}
+.petal3d{
+  position:absolute;
+  top:50%; left:50%;
+  width:34px; height:56px;
+  margin:-28px 0 0 -17px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: linear-gradient(180deg, var(--correct-a), var(--correct-b) 85%);
+  transform-origin: 50% 100%;
+  box-shadow: inset 0 -6px 10px rgba(150,90,0,.25), 0 4px 10px rgba(150,90,0,.18);
+}
+.flower-core{
+  position:absolute;
+  top:50%; left:50%;
+  width:26px; height:26px;
+  margin:-13px 0 0 -13px;
+  border-radius:50%;
+  background: radial-gradient(circle at 35% 30%, #7a4a00, #a86a00 70%);
+  box-shadow: 0 3px 8px rgba(0,0,0,.25);
+  transform: translateZ(14px);
+}
+
+.win-eyebrow{
+  font-family:'Nunito';
+  font-weight:800;
+  font-size:.72rem;
+  letter-spacing:.6px;
+  color: var(--yellow-deep);
+  margin: 4px 0 2px;
+}
+.win-title{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:600;
+  font-size: 1.5rem;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+
+.letter{
+  text-align:left;
+  background: var(--yellow-50);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 18px;
+  margin: 4px 0 16px;
+  position:relative;
+}
+.letter::before{
+  content:"❝";
+  position:absolute;
+  top:-2px; left:12px;
+  font-family:'Fraunces',serif;
+  font-size:2.4rem;
+  color: var(--yellow-300);
+  line-height:1;
+}
+#letter-text{
+  font-family:'Fraunces', serif;
+  font-size:1rem;
+  line-height:1.65;
+  color: var(--ink);
+  white-space:pre-wrap;
+  margin:0;
+  padding-top:10px;
+}
+#letter-signature{
+  display:block;
+  margin-top:12px;
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:600;
+  color: var(--yellow-deep);
+  text-align:right;
+}
+
+.photo-frame{
+  width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  border: 6px solid var(--white);
+  outline: 1px solid var(--line);
+  box-shadow: 0 12px 26px -10px rgba(120,80,0,.35);
+  margin-bottom: 6px;
+  aspect-ratio: 4/3;
+  background: linear-gradient(155deg, var(--yellow-50), var(--yellow-100));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.photo-frame img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+.photo-placeholder{
+  text-align:center;
+  color: var(--yellow-deep);
+  font-size:.8rem;
+  font-weight:700;
+  padding: 20px;
+  line-height:1.5;
+}
+.photo-placeholder svg{ width:34px; height:34px; margin-bottom:6px; opacity:.8; }
+
+.win-hint{
+  margin-top:14px;
+  font-size:.72rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Lose banner ---------- */
+.retry-banner{
+  width:100%;
+  background: var(--white);
+  border: 1.5px solid var(--yellow-300);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom:16px;
+  text-align:center;
+  animation: cardIn .4s ease both;
+}
+.retry-banner p{
+  margin:0 0 10px;
+  font-weight:700;
+  color: var(--ink);
+  font-size:.92rem;
+}
+.retry-btn{
+  border:none;
+  background: linear-gradient(155deg, var(--correct-a), var(--correct-b));
+  color:#4a2e00;
+  font-family:'Nunito';
+  font-weight:800;
+  font-size:.85rem;
+  padding:10px 22px;
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow: var(--shadow-yellow);
+  transition: transform .12s;
+}
+.retry-btn:active{ transform: scale(.95); }
+
+@media (max-width: 360px){
+  .key{ height:42px; font-size:.75rem; }
+  .win-title{ font-size:1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<svg class="bg-petal p1" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#f7b733" stroke-width="2" opacity=".3"/></svg>
+<svg class="bg-petal p2" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#f7b733" stroke-width="2" opacity=".3"/></svg>
+
+<div class="toast" id="toast"></div>
+
+<div class="wrap">
+  <header>
+    <svg class="eyebrow-flower" viewBox="0 0 64 64" fill="none">
+      <g>
+        <ellipse cx="32" cy="18" rx="9" ry="13" fill="#ffd23f"/>
+        <ellipse cx="32" cy="46" rx="9" ry="13" fill="#ffd23f"/>
+        <ellipse cx="18" cy="32" rx="13" ry="9" fill="#ffd23f"/>
+        <ellipse cx="46" cy="32" rx="13" ry="9" fill="#ffd23f"/>
+        <ellipse cx="21" cy="21" rx="9" ry="12" transform="rotate(-45 21 21)" fill="#f6a821"/>
+        <ellipse cx="43" cy="43" rx="9" ry="12" transform="rotate(-45 43 43)" fill="#f6a821"/>
+        <ellipse cx="43" cy="21" rx="9" ry="12" transform="rotate(45 43 21)" fill="#f6a821"/>
+        <ellipse cx="21" cy="43" rx="9" ry="12" transform="rotate(45 21 43)" fill="#f6a821"/>
+        <circle cx="32" cy="32" r="10" fill="#7a4a00"/>
+      </g>
+    </svg>
+    <h1 id="game-title">Um jardim de <em>palavras</em></h1>
+    <p class="subtitle" id="game-subtitle">21 de setembro é o dia das flores amarelas — a tradição da primavera na América Latina. Descubra a palavra em até <strong>6 tentativas</strong> pra ganhar as suas.</p>
+  </header>
+
+  <div class="board" id="board"></div>
+
+  <div class="keyboard" id="keyboard"></div>
+
+  <p class="footnote">Toque nas letras ou use o teclado do seu celular. Boa sorte 🌼</p>
+</div>
+
+<!-- ===================== TELA DE VITÓRIA ===================== -->
+<div class="win-overlay" id="winOverlay">
+  <div class="petals-field" id="petalsField"></div>
+
+  <div class="win-card">
+    <div class="flower3d-stage">
+      <div class="flower3d">
+        <div class="petal3d" style="transform:rotateY(0deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="petal3d" style="transform:rotateY(60deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="petal3d" style="transform:rotateY(120deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="petal3d" style="transform:rotateY(180deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="petal3d" style="transform:rotateY(240deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="petal3d" style="transform:rotateY(300deg) translateZ(0) rotateX(20deg);"></div>
+        <div class="flower-core"></div>
+      </div>
+    </div>
+
+    <p class="win-eyebrow">VOCÊ ACERTOU</p>
+    <h2 class="win-title" id="win-title">Suas flores amarelas 🌼</h2>
+
+    <div class="photo-frame" id="photoFrame">
+      <div class="photo-placeholder" id="photoPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h3l2-2h6l2 2h3v12H4V7z" stroke="#c8860a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" stroke="#c8860a" stroke-width="1.6"/></svg>
+        <span>coloque aqui uma foto de vocês dois</span>
+      </div>
+    </div>
+
+    <div class="letter">
+      <p id="letter-text"></p>
+      <span id="letter-signature"></span>
+    </div>
+
+    <p class="win-hint">feito com carinho pra você 💛</p>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   CONFIG — edite aqui para personalizar o site
+   ================================================================ */
+const CONFIG = {
+  // A palavra do jogo. Sempre em MAIÚSCULAS e sem acento.
+  targetWord: "MOMOLADA",
+
+  // Título e subtítulo que aparecem no topo (opcional editar)
+  title: 'Para minha <em>chorona</em>',
+  subtitle: 'Pensou que eu tinha esquecido, né? — Estava sem ideia de como te dar algo legal, então fiz esse jogo para você acertar a palavra correta. Só ganhará a flor passando pelo desafio -- <strong>DICA: é o apelido que te chamo quando quero ser fofo rsrs</strong>',
+
+  // Título mostrado na tela de vitória
+  winTitle: "Suas flores amarelas 🌼",
+
+  // O TEXTO DA CARTA — troque pelo que quiser dizer pra ela
+  letterText: "Você acertou, amor. \n\nSei que não é grande coisa, mas demorou bastante para fazer isso, espero que tenha gostado. Eu te amo muito e quero te ver feliz, mas como to sem din não tenho muito oque fazer, então usei oque eu sei para te agradar \n\nObrigado, por ser minha bobona de sempre :)",
+
+  // Assinatura da carta
+  letterSignature: "com carinho, Momolado",
+
+  // A FOTO — cole aqui o link de uma imagem, ou um base64 (data:image/...)
+  // Deixe em branco ("") para mostrar o quadro de espera.
+  photoSrc: "Foto2.jpeg"
+};
+
+/* ================================================================
+   Não precisa mexer daqui pra baixo
+   ================================================================ */
+
+// aplica textos do CONFIG
+document.getElementById('game-title').innerHTML = CONFIG.title;
+document.getElementById('game-subtitle').innerHTML = CONFIG.subtitle;
+document.getElementById('win-title').textContent = CONFIG.winTitle;
+document.getElementById('letter-text').textContent = CONFIG.letterText;
+document.getElementById('letter-signature').textContent = CONFIG.letterSignature ? "— " + CONFIG.letterSignature : "";
+
+if (CONFIG.photoSrc && CONFIG.photoSrc.trim() !== ""){
+  const frame = document.getElementById('photoFrame');
+  frame.innerHTML = '<img src="' + CONFIG.photoSrc + '" alt="foto de vocês">';
+}
+
+const TARGET = normalize(CONFIG.targetWord);
+const WORD_LEN = TARGET.length;
+const MAX_ATTEMPTS = 6;
+
+document.documentElement.style.setProperty('--word-len', WORD_LEN);
+
+function normalize(s){
+  return s.toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Z]/g,'');
+}
+
+// ---------- state ----------
+let currentGuess = "";
+let attempt = 0;
+let finished = false;
+const rowsEls = [];
+const tileEls = [];
+
+// ---------- build board ----------
+const boardEl = document.getElementById('board');
+for (let r = 0; r < MAX_ATTEMPTS; r++){
+  const row = document.createElement('div');
+  row.className = 'row';
+  const tiles = [];
+  for (let c = 0; c < WORD_LEN; c++){
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    row.appendChild(tile);
+    tiles.push(tile);
+  }
+  boardEl.appendChild(row);
+  rowsEls.push(row);
+  tileEls.push(tiles);
+}
+
+// ---------- build keyboard ----------
+const KB_ROWS = [
+  ['Q','W','E','R','T','Y','U','I','O','P'],
+  ['A','S','D','F','G','H','J','K','L','Ç'],
+  ['ENTER','Z','X','C','V','B','N','M','⌫']
+];
+const keyboardEl = document.getElementById('keyboard');
+const keyEls = {};
+KB_ROWS.forEach(rowKeys => {
+  const krow = document.createElement('div');
+  krow.className = 'krow';
+  rowKeys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className = 'key' + ((k==='ENTER'||k==='⌫') ? ' wide' : '');
+    btn.textContent = k === 'ENTER' ? 'ENTER' : k;
+    btn.addEventListener('click', () => handleKey(k));
+    krow.appendChild(btn);
+    if (k !== 'ENTER' && k !== '⌫') keyEls[k] = btn;
+  });
+  keyboardEl.appendChild(krow);
+});
+
+// ---------- input handling ----------
+window.addEventListener('keydown', (e) => {
+  if (finished) return;
+  const k = e.key.toUpperCase();
+  if (k === 'ENTER') handleKey('ENTER');
+  else if (k === 'BACKSPACE') handleKey('⌫');
+  else if (/^[A-ZÇ]$/.test(k)) handleKey(k);
+});
+
+function handleKey(k){
+  if (finished) return;
+  if (k === 'ENTER'){ submitGuess(); return; }
+  if (k === '⌫'){ removeLetter(); return; }
+  addLetter(k);
+}
+
+function addLetter(letter){
+  if (currentGuess.length >= WORD_LEN) return;
+  currentGuess += letter;
+  const tile = tileEls[attempt][currentGuess.length - 1];
+  tile.textContent = letter;
+  tile.classList.add('filled','pop');
+  setTimeout(()=>tile.classList.remove('pop'), 130);
+}
+
+function removeLetter(){
+  if (currentGuess.length === 0) return;
+  const idx = currentGuess.length - 1;
+  const tile = tileEls[attempt][idx];
+  tile.textContent = '';
+  tile.classList.remove('filled');
+  currentGuess = currentGuess.slice(0, -1);
+}
+
+function showToast(msg, duration=1600){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=> t.classList.remove('show'), duration);
+}
+
+function submitGuess(){
+  if (currentGuess.length < WORD_LEN){
+    rowsEls[attempt].classList.add('shake');
+    showToast('Complete a palavra ✨');
+    setTimeout(()=> rowsEls[attempt].classList.remove('shake'), 450);
+    return;
+  }
+
+  const guess = normalize(currentGuess);
+  const result = evaluateGuess(guess, TARGET);
+  revealRow(attempt, result, guess, () => {
+    const won = guess === TARGET;
+    if (won){
+      finished = true;
+      setTimeout(celebrateWin, 350);
+    } else if (attempt === MAX_ATTEMPTS - 1){
+      finished = true;
+      setTimeout(()=> showRetryBanner(), 250);
+    } else {
+      showToast('Tente novamente 🌼');
+    }
+  });
+
+  attempt++;
+  currentGuess = "";
+}
+
+function evaluateGuess(guess, target){
+  const result = new Array(WORD_LEN).fill('absent');
+  const targetArr = target.split('');
+  const guessArr = guess.split('');
+  const used = new Array(WORD_LEN).fill(false);
+
+  for (let i = 0; i < WORD_LEN; i++){
+    if (guessArr[i] === targetArr[i]){
+      result[i] = 'correct';
+      used[i] = true;
+    }
+  }
+  for (let i = 0; i < WORD_LEN; i++){
+    if (result[i] === 'correct') continue;
+    for (let j = 0; j < WORD_LEN; j++){
+      if (!used[j] && guessArr[i] === targetArr[j]){
+        result[i] = 'present';
+        used[j] = true;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+function revealRow(rowIndex, result, guess, onDone){
+  const tiles = tileEls[rowIndex];
+  const priority = { absent:0, present:1, correct:2 };
+  tiles.forEach((tile, i) => {
+    setTimeout(() => {
+      tile.classList.add('flip');
+      setTimeout(() => {
+        tile.classList.add(result[i]);
+        const letter = guess[i];
+        const keyEl = keyEls[letter];
+        if (keyEl){
+          const current = keyEl.dataset.status || 'none';
+          if (priority[result[i]] >= (priority[current] ?? -1)){
+            keyEl.classList.remove('absent','present','correct');
+            keyEl.classList.add(result[i]);
+            keyEl.dataset.status = result[i];
+          }
+        }
+      }, 270);
+      if (i === tiles.length - 1){
+        setTimeout(onDone, 600);
+      }
+    }, i * 220);
+  });
+}
+
+function showRetryBanner(){
+  const wrap = document.querySelector('.wrap');
+  const banner = document.createElement('div');
+  banner.className = 'retry-banner';
+  banner.innerHTML = `
+    <p>Quase! A palavra era <strong>${CONFIG.targetWord}</strong>. Tenta de novo? 🌼</p>
+    <button class="retry-btn" id="retryBtn">Tentar novamente</button>
+  `;
+  wrap.insertBefore(banner, document.getElementById('board'));
+  document.getElementById('retryBtn').addEventListener('click', resetGame);
+}
+
+function resetGame(){
+  attempt = 0;
+  currentGuess = "";
+  finished = false;
+  tileEls.flat().forEach(tile => {
+    tile.textContent = '';
+    tile.className = 'tile';
+  });
+  Object.values(keyEls).forEach(k => {
+    k.classList.remove('absent','present','correct');
+    delete k.dataset.status;
+  });
+  const banner = document.querySelector('.retry-banner');
+  if (banner) banner.remove();
+}
+
+// ---------- win celebration ----------
+function celebrateWin(){
+  const overlay = document.getElementById('winOverlay');
+  spawnPetals();
+  overlay.classList.add('show');
+}
+
+function spawnPetals(){
+  const field = document.getElementById('petalsField');
+  field.innerHTML = '';
+  const count = 26;
+  for (let i = 0; i < count; i++){
+    const p = document.createElement('div');
+    p.className = 'falling-petal';
+    const left = Math.random() * 100;
+    const size = 10 + Math.random() * 14;
+    const duration = 4 + Math.random() * 4;
+    const delay = Math.random() * 2.5;
+    p.style.left = left + 'vw';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.animationDuration = duration + 's';
+    p.style.animationDelay = delay + 's';
+    field.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>
